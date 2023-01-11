@@ -18,6 +18,7 @@ public class SockServiceImpl implements SockService {
         int quantity = sockStore.getQuantity();
         socks.put(sock, socks.getOrDefault(sock, 0) + quantity);
 
+
     }
 
     @Override
@@ -25,13 +26,30 @@ public class SockServiceImpl implements SockService {
         if (socks.containsKey(sockStore.getSock())) {
             if (socks.get(sockStore.getSock()) >= sockStore.getQuantity()) {
                 socks.put(sockStore.getSock(), socks.get(sockStore.getSock()) - sockStore.getQuantity());
+            }else{
+                throw new IllegalArgumentException("На складе  нет нужного кол-ва  носков");
             }
         }
     }
+    @Override
+    public int getQuantity(Sock sock){
+        return socks.get(sock);
+    }
 
-
-
-
+    @Override
+    public int getSock(String color, int size, int cottonPartMin, int cottonPartMax){
+        int quantity = 0;
+        Sock.Color color1 = Sock.convertColor(color);
+        Sock.Size size1 = Sock.sizeConvertor(size);
+        for(Sock sock : socks.keySet()){
+            if(sock.getColor().equals(color1)&&sock.getSize().equals(size1)&&sock.getCottonPart()>=cottonPartMin&&sock.getCottonPart()<=cottonPartMax){
+                quantity+= socks.get(sock);
+            }else {
+                throw new IllegalArgumentException("Нужных носков на складе нет");
+            }
+        }
+        return quantity;
+    }
 
 
 }
